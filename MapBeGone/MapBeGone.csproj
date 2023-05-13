@@ -85,6 +85,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.TextMeshPro_publicized">
+      <HintPath>..\..\..\Valheim\valheim_Data\Managed\publicized_assemblies\Unity.TextMeshPro_publicized.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\Valheim\unstripped_corlib\UnityEngine.dll</HintPath>
     </Reference>

@@ -12,6 +12,7 @@ Allows you to:
 * Allow or deny zoom of minimap (if minimap enabled).
 * Show or hide biome name on minimap (if minimap enabled).
 * Show or hide wind direction on minimap (if minimap enabled).
+* Enable or disable forced sharing of player map positions.
 * Manage discovery radius when not "attached" to a boat.
 * Manage discovery radius when sitting, holding fast, or using rudder on a boat.
 * ServerSync for all of these individual options.
@@ -31,7 +32,7 @@ Unzip the contents to your ``BepInEx\plugins`` folder.
 
 ## Thanks
 
-* Huge thanks go out to [Azumatt](https://valheim.thunderstore.io/package/Azumatt/) (and by extension [blaxxun-boop](https://github.com/blaxxun-boop)) without their videos and template examples none of this would be possible.
+* [Azumatt](https://valheim.thunderstore.io/package/Azumatt/) for their videos and examples.
 * [blaxxun-boop](https://github.com/blaxxun-boop) for ServerSync.
 
 
@@ -41,6 +42,12 @@ MIT No Attribution
 
 
 ## Changelog
+
+### 1.3.0
+
+* Updated references to work with game version 0.215.2.
+* Fixed MissingFieldException.
+
 
 ### 1.2.0
 

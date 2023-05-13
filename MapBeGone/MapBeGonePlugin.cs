@@ -17,7 +17,7 @@ public class MapBeGonePlugin : BaseUnityPlugin
 {
     #region Variables
     internal const string PLUGIN_NAME = "MapBeGone";
-    internal const string PLUGIN_VERSION = "1.2.0";
+    internal const string PLUGIN_VERSION = "1.3.0";
     internal const string PLUGIN_GUID = "Yoyo." + PLUGIN_NAME;
     internal const string PLUGIN_AUTHOR = "GuyDeYoyo";
 
@@ -61,6 +61,7 @@ public class MapBeGonePlugin : BaseUnityPlugin
         _configEnableMapZoom = config("3 - Map Extras", "Minimap Zoom", Toggle.Off, "Enable or disable the ability to zoom the minimap.", true);
         _configEnableShowBiome = config("3 - Map Extras", "Biome", Toggle.Off, "Enable or disable the biome name on the minimap.", true);
         _configEnableShowWindDirection = config("3 - Map Extras", "Wind Direction", Toggle.Off, "Enable or disable the wind direction arrow on the minimap.", true);
+        _configEnableShareLocation = config("3 - Map Extras", "Player Visibility", Toggle.Off, "Enable or disable forced player visibility on map.", true);
 
         _configEnableDiscoveryRadius = config("4 - Discovery Radius", "Enabled", Toggle.On, "Enable or disable customization of map discovery radius.", true);
         _configDiscoveryRadiusMap = config("4 - Discovery Radius", "Standard", 100, "Radius of map discovery when not sailing on a boat (as a percentage).", true);
@@ -73,9 +74,6 @@ public class MapBeGonePlugin : BaseUnityPlugin
         ShowMinimapWindDirection = _configEnableShowWindDirection.Value == Toggle.On ? true : false;
 
         SetupWatcher();
-
-        UpdateMinimapItemVisibility(1, ShowMinimapBiome);
-        UpdateMinimapItemVisibility(2, ShowMinimapWindDirection);
 
         _configEnableShowBiome.SettingChanged += ConfigChanged_MinimapBiomes;
         _configEnableShowWindDirection.SettingChanged += ConfigChanged_MinimapWindDirection;
@@ -99,12 +97,31 @@ public class MapBeGonePlugin : BaseUnityPlugin
         Config.Save();
         _harmony?.UnpatchSelf();
     }
-    #endregion Standard Methods
+
+
+    private void Update()
+    {
+      if (!_configEnabled.Value || Player.m_localPlayer == null || ZInput.instance == null) return;
+      if (_configEnableShareLocation.Value == Toggle.On)
+      {
+        if (!ZNet.instance.IsReferencePositionPublic()) ZNet.instance.SetPublicReferencePosition(true);
+      }
+    }
+
+
+    [HarmonyPatch(nameof(Minimap.Start))]
+    [HarmonyPostfix]
+    public static void Minimap_Start_Postfix(Minimap __instance)
+    {
+      UpdateMinimapItemVisibility(1, ShowMinimapBiome);
+      UpdateMinimapItemVisibility(2, ShowMinimapWindDirection);
+    }
+  #endregion Standard Methods
 
 
 
-    #region Small and Large Map
-    private static bool ShowMinimapBiome = false;
+  #region Small and Large Map
+  private static bool ShowMinimapBiome = false;
     private static bool ShowMinimapWindDirection = false;
 
     internal static void UpdateMinimapItemVisibility(int MinimapItem, bool InUse)
@@ -192,7 +209,6 @@ public class MapBeGonePlugin : BaseUnityPlugin
                 if (_configEnableShowWindDirection.Value == Toggle.Off && __instance.m_windMarker.sizeDelta != new Vector2() { x = 0, y = 0 }) UpdateMinimapItemVisibility(2, false);
             }
             
-
 
             if (AllowLargeMap)
             {
@@ -383,6 +399,7 @@ public class MapBeGonePlugin : BaseUnityPlugin
     internal static ConfigEntry<Toggle>? _configEnableShowBiome = null!;
     internal static ConfigEntry<Toggle>? _configEnableShowWindDirection = null!;
     internal static ConfigEntry<Toggle>? _configEnableDiscoveryRadius = null!;
+    internal static ConfigEntry<Toggle>? _configEnableShareLocation = null!;
     internal static ConfigEntry<int>? _configDiscoveryRadiusMap = null!;
     internal static ConfigEntry<int>? _configDiscoveryRadiusBoat = null!;
     #nullable disable
